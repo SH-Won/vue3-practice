@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
-import post from "./post";
-import article from "./article";
+import post from "./modules/post";
+import article from "./modules/article";
 
 export default createStore({
     state: {},

@@ -1,17 +1,17 @@
 import * as ArticleAPI from "@/service/article";
 
 const state = () => ({
-    articles: [],
-    articleSize: 0,
+    items: [],
+    itemSize: 0,
     hasMore: true,
     loading: true,
 });
 const getters = {};
 const mutations = {
-    setPosts(state, payload) {
-        const { articles, articleSize, hasMore } = payload;
-        state.articles = [...state.articles, ...articles];
-        state.articleSize = articleSize;
+    setItems(state, payload) {
+        const { items, itemSize, hasMore } = payload;
+        state.items = [...state.items, ...items];
+        state.itemSize = itemSize;
         state.hasMore = hasMore;
     },
     setLoading(state, payload) {
@@ -25,11 +25,11 @@ const actions = {
             const response = await ArticleAPI.getArticles(params);
             const { posts, postSize } = response;
             const payload = {
-                articles: posts,
-                articleSize: postSize,
+                items: posts,
+                itemSize: postSize,
                 hasMore: postSize >= params.limit,
             };
-            commit("setPosts", payload);
+            commit("setItems", payload);
             commit("setLoading", false);
         } catch (e) {
             throw new Error("무언가 잘못 됐습니다");

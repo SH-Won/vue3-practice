@@ -3,12 +3,10 @@
         <ItemList layout="flex-wrap">
             <template v-slot:list>
                 <SingleArticleItem
-                    v-for="(article, index) in articles"
-                    :key="article._id"
-                    :item="article"
-                    :targetRef="
-                        articles.length - 1 === index ? targetRef : null
-                    "
+                    v-for="(item, index) in items"
+                    :key="item._id"
+                    :item="item"
+                    :targetRef="items.length - 1 === index ? targetRef : null"
                 />
             </template>
         </ItemList>
@@ -18,53 +16,30 @@
 
 <script>
 import useInfinityScroll from "@/utils/useInfinityScroll";
-import { computed } from "@vue/reactivity";
 import { onMounted, ref } from "vue";
-import { useStore } from "vuex";
 import PageLoading from "@/components/Loading/pageLoading.vue";
 import ItemList from "@/components/Main/ItemList.vue";
 import SingleArticleItem from "@/components/Main/SingleArticleItem.vue";
+import { ARTICLE_STORE, GET_ARTICLE } from "@/store/types/article";
+import useFetch from "@/hooks/useFetch";
 
-const useFetch = () => {
-    const store = useStore();
-    const articles = computed(() => store.state.article.articles);
-    const loading = computed(() => store.state.article.loading);
-    const hasMore = computed(() => store.state.article.hasMore);
-    const params = ref({
-        skip: articles.value.length,
-        limit: 4,
-    });
-    const getArticles = () => {
-        store.dispatch("article/getArticles", params.value);
-        params.value = {
-            skip: params.value.skip + params.value.limit,
-            limit: params.value.limit,
-        };
-    };
-    const { targetRef } = useInfinityScroll(loading, hasMore, getArticles);
-    console.log(params.value);
-    return {
-        articles,
-        loading,
-        getArticles,
-        targetRef,
-    };
-};
 export default {
     setup() {
         const pageLoading = ref(false);
-        const { articles, loading, getArticles, targetRef } = useFetch();
-
+        const { items, loading, getItems, hasMore } = useFetch(
+            ARTICLE_STORE,
+            GET_ARTICLE,
+        );
+        const { targetRef } = useInfinityScroll(loading, hasMore, getItems);
         onMounted(() => {
-            if (!articles.value.length) {
+            if (!items.value.length) {
                 pageLoading.value = true;
-                getArticles();
+                getItems();
             }
-
             pageLoading.value = false;
         });
         return {
-            articles,
+            items,
             loading,
             targetRef,
         };

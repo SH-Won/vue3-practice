@@ -6,16 +6,16 @@
             :ref="articles.length - 1 === index ? targetRef : ''"
         /> -->
 <template>
-    <h2>{{ title }}</h2>
-    <input @input="handleChangeTitle" />
+    <!-- <h2>{{ title }}</h2>
+    <input @input="handleChangeTitle" /> -->
     <div class="container">
         <ItemList layout="flex-wrap">
             <template v-slot:list>
                 <SingleArticleItem
-                    v-for="(post, index) in posts"
-                    :key="post._id"
-                    :item="post"
-                    :targetRef="posts.length - 1 === index ? targetRef : null"
+                    v-for="(item, index) in items"
+                    :key="item._id"
+                    :item="item"
+                    :targetRef="items.length - 1 === index ? targetRef : null"
                 />
             </template>
         </ItemList>
@@ -24,51 +24,33 @@
 </template>
 
 <script>
-import useForm from "@/components/useForm.js";
 import useInfinityScroll from "@/utils/useInfinityScroll";
-import { computed } from "@vue/reactivity";
 import { onMounted, ref } from "vue";
-import { useStore } from "vuex";
 import PageLoading from "@/components/Loading/pageLoading.vue";
 import ItemList from "@/components/Main/ItemList.vue";
 import SingleArticleItem from "@/components/Main/SingleArticleItem.vue";
+import { GET_POST, STORE_POST } from "@/store/types/post";
+import useFetch from "@/hooks/useFetch";
 
 export default {
     setup() {
         const pageLoading = ref(false);
+        const { items, loading, getItems, hasMore } = useFetch(
+            STORE_POST,
+            GET_POST,
+        );
 
-        const store = useStore();
-        const { title, handleChangeTitle } = useForm();
-        const posts = computed(() => store.state.post.posts);
-        const hasMore = computed(() => store.state.post.hasMore);
-        const loading = computed(() => store.state.post.loading);
-        const params = ref({
-            skip: posts.value.length,
-            limit: 4,
-        });
-        const getPosts = () => {
-            store.dispatch("post/getPosts", params.value);
-            // console.log(posts);
-            params.value = {
-                skip: params.value.skip + params.value.limit,
-                limit: params.value.limit,
-            };
-        };
-
-        const { targetRef } = useInfinityScroll(loading, hasMore, getPosts);
+        const { targetRef } = useInfinityScroll(loading, hasMore, getItems);
         onMounted(() => {
-            if (!posts.value.length) {
+            if (!items.value.length) {
                 pageLoading.value = true;
-                getPosts();
+                getItems();
             }
             pageLoading.value = false;
         });
         return {
             loading,
-            params,
-            title,
-            handleChangeTitle,
-            posts,
+            items,
             targetRef,
         };
     },
