@@ -1,14 +1,26 @@
-<template>
-    <h2>{{ title }}</h2>
-    <input @input="handleChangeTitle" />
-    <div class="container">
-        <img
+<!-- <img
             v-lazyload
             v-for="(article, index) in articles"
             :key="article._id"
             :data-url="article.imageUrls[1]"
             :ref="articles.length - 1 === index ? targetRef : ''"
-        />
+        /> -->
+<template>
+    <h2>{{ title }}</h2>
+    <input @input="handleChangeTitle" />
+    <div class="container">
+        <ItemList layout="flex-wrap">
+            <template v-slot:list>
+                <SingleArticleItem
+                    v-for="(article, index) in articles"
+                    :key="article._id"
+                    :item="article"
+                    :targetRef="
+                        articles.length - 1 === index ? targetRef : null
+                    "
+                />
+            </template>
+        </ItemList>
         <PageLoading v-if="loading" explain="로딩" />
     </div>
 </template>
@@ -20,6 +32,8 @@ import { computed } from "@vue/reactivity";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import PageLoading from "@/components/Loading/pageLoading.vue";
+import ItemList from "@/components/Main/ItemList.vue";
+import SingleArticleItem from "@/components/Main/SingleArticleItem.vue";
 
 export default {
     setup() {
@@ -27,26 +41,27 @@ export default {
             skip: 0,
             limit: 4,
         });
-        const loading = ref(true);
+        const pageLoading = ref(true);
 
         const store = useStore();
         const { title, handleChangeTitle } = useForm();
         const articles = computed(() => store.state.article.articles);
-        const getArticles = async () => {
-            loading.value = true;
-            await store.dispatch("article/getArticles", params.value);
+        const hasMore = computed(() => store.state.article.hasMore);
+        const loading = computed(() => store.state.article.loading);
+        const getArticles = () => {
+            store.dispatch("article/getArticles", params.value);
             params.value = {
                 skip: params.value.skip + params.value.limit,
                 limit: params.value.limit,
             };
-            loading.value = false;
         };
 
-        const { targetRef } = useInfinityScroll(loading, getArticles);
+        const { targetRef } = useInfinityScroll(loading, hasMore, getArticles);
         onMounted(() => {
-            console.log(loading.value);
+            pageLoading.value = true;
+            console.log(params.value);
             getArticles();
-            console.log(loading.value);
+            pageLoading.value = false;
         });
         return {
             loading,
@@ -57,7 +72,7 @@ export default {
             targetRef,
         };
     },
-    components: { PageLoading },
+    components: { PageLoading, ItemList, SingleArticleItem },
 };
 </script>
 
@@ -65,6 +80,7 @@ export default {
 .container {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 img {
