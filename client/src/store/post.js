@@ -1,17 +1,17 @@
 import * as ArticleAPI from "@/service/article";
 
 const state = () => ({
-    articles: [],
-    articleSize: 0,
+    posts: [],
+    postSize: 0,
     hasMore: true,
     loading: true,
 });
 const getters = {};
 const mutations = {
     setPosts(state, payload) {
-        const { articles, articleSize, hasMore } = payload;
-        state.articles = [...state.articles, ...articles];
-        state.articleSize = articleSize;
+        const { posts, postSize, hasMore } = payload;
+        state.posts = [...state.posts, ...posts];
+        state.postSize = postSize;
         state.hasMore = hasMore;
     },
     setLoading(state, payload) {
@@ -19,14 +19,14 @@ const mutations = {
     },
 };
 const actions = {
-    getArticles: async ({ state, commit }, params) => {
+    getPosts: async ({ state, commit }, params) => {
         commit("setLoading", true);
         try {
-            const response = await ArticleAPI.getArticles(params);
+            const response = await ArticleAPI.getPosts(params);
             const { posts, postSize } = response;
             const payload = {
-                articles: posts,
-                articleSize: postSize,
+                posts,
+                postSize,
                 hasMore: postSize >= params.limit,
             };
             commit("setPosts", payload);

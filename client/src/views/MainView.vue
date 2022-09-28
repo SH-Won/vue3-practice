@@ -12,12 +12,10 @@
         <ItemList layout="flex-wrap">
             <template v-slot:list>
                 <SingleArticleItem
-                    v-for="(article, index) in articles"
-                    :key="article._id"
-                    :item="article"
-                    :targetRef="
-                        articles.length - 1 === index ? targetRef : null
-                    "
+                    v-for="(post, index) in posts"
+                    :key="post._id"
+                    :item="post"
+                    :targetRef="posts.length - 1 === index ? targetRef : null"
                 />
             </template>
         </ItemList>
@@ -37,30 +35,32 @@ import SingleArticleItem from "@/components/Main/SingleArticleItem.vue";
 
 export default {
     setup() {
-        const params = ref({
-            skip: 0,
-            limit: 4,
-        });
-        const pageLoading = ref(true);
+        const pageLoading = ref(false);
 
         const store = useStore();
         const { title, handleChangeTitle } = useForm();
-        const articles = computed(() => store.state.article.articles);
-        const hasMore = computed(() => store.state.article.hasMore);
-        const loading = computed(() => store.state.article.loading);
-        const getArticles = () => {
-            store.dispatch("article/getArticles", params.value);
+        const posts = computed(() => store.state.post.posts);
+        const hasMore = computed(() => store.state.post.hasMore);
+        const loading = computed(() => store.state.post.loading);
+        const params = ref({
+            skip: posts.value.length,
+            limit: 4,
+        });
+        const getPosts = () => {
+            store.dispatch("post/getPosts", params.value);
+            // console.log(posts);
             params.value = {
                 skip: params.value.skip + params.value.limit,
                 limit: params.value.limit,
             };
         };
 
-        const { targetRef } = useInfinityScroll(loading, hasMore, getArticles);
+        const { targetRef } = useInfinityScroll(loading, hasMore, getPosts);
         onMounted(() => {
-            pageLoading.value = true;
-            console.log(params.value);
-            getArticles();
+            if (!posts.value.length) {
+                pageLoading.value = true;
+                getPosts();
+            }
             pageLoading.value = false;
         });
         return {
@@ -68,7 +68,7 @@ export default {
             params,
             title,
             handleChangeTitle,
-            articles,
+            posts,
             targetRef,
         };
     },

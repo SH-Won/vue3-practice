@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import post from "./post";
 import article from "./article";
 
 export default createStore({
@@ -6,5 +7,5 @@ export default createStore({
     getters: {},
     mutations: {},
     actions: {},
-    modules: { article },
+    modules: { post, article },
 });
