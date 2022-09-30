@@ -1,7 +1,7 @@
 <template>
     <article class="item" :ref="targetRef">
         <figure class="item__img-wrapper">
-            <img v-lazyload :data-url="item.thumbnail || item.imageUrls[1]" />
+            <img v-lazyload :data-url="item.thumbnail || item.imageUrls[3]" />
         </figure>
         <h2>{{ item.title }}</h2>
     </article>

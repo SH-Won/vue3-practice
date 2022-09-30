@@ -11,14 +11,6 @@
                 :data="data"
                 :handleFilter="handleSingleFilter"
             />
-            <!-- <SearchFilterInput
-                :data="searchInputData.tech"
-                :handleFilter="handleSingleFilter"
-            />
-            <SearchFilterInput
-                :data="searchInputData.company"
-                :handleFilter="handleSingleFilter"
-            /> -->
         </div>
         <div class="search__flexwrap">
             <SearchFilterBox
@@ -52,18 +44,15 @@ export default {
             place: "",
             positionTheme: "",
         });
-        // const jobs = ref([]);
 
         const handleCheckBoxFilter = e => {
-            const value = e.target.value;
-            const name = e.target.name;
+            const { value, name } = e.target;
             const index = filter.value[name].indexOf(value);
             if (index < 0) {
                 filter.value[name].push(value);
             } else {
                 filter.value[name].splice(index, 1);
             }
-            console.log(filter.value);
         };
         const handleSingleFilter = e => {
             const { value, name } = e.target;
@@ -76,12 +65,10 @@ export default {
 
         return {
             filter,
-
             searchDatas,
             searchInputData,
             handleCheckBoxFilter,
             handleSingleFilter,
-
             print,
         };
     },
@@ -103,13 +90,30 @@ export default {
     align-items: center;
 }
 .search__flexwrap {
-    width: 100%;
+    width: 80%;
+
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
+    justify-content: space-between;
 }
 .search__flexwrap > .search__form {
-    width: 40%;
+    margin: 1rem 0;
+    flex: 0 0 47%;
+}
+@media screen and (min-width: 775px) {
+    .search__flex {
+        width: 90%;
+        flex-direction: row;
+    }
+    .search__flex > .search__form {
+        flex: 0 0 30%;
+        margin: 1rem 0;
+    }
+    .search__flexwrap {
+        width: 90%;
+    }
+    .search__flexwrap > .search__form {
+        flex: 0 0 18%;
+    }
 }
 </style>
