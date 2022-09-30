@@ -1,5 +1,5 @@
-export const searchDatas = {
-    jobs: {
+export const searchDatas = [
+    {
         name: "직무",
         boxType: "checkbox",
         class: "jobs",
@@ -28,7 +28,7 @@ export const searchDatas = {
             "블록체인",
         ],
     },
-    career: {
+    {
         name: "경력",
         boxType: "radio",
         class: "career",
@@ -46,7 +46,7 @@ export const searchDatas = {
             "9년 경력",
         ],
     },
-    wage: {
+    {
         name: "연봉",
         boxType: "radio",
         class: "wage",
@@ -64,13 +64,13 @@ export const searchDatas = {
             "8,000 이상",
         ],
     },
-    people: {
+    {
         name: "직원 수",
         boxType: "radio",
         class: "people",
         types: ["전체", "5명 이상", "20명 이상", "100명 이상"],
     },
-    place: {
+    {
         name: "지역",
         boxType: "radio",
         class: "place",
@@ -85,9 +85,9 @@ export const searchDatas = {
             "수도권 외",
         ],
     },
-    positionTheme: {
+    {
         name: "포지션 테마",
-        boxTpe: "radio",
+        boxType: "radio",
         class: "positionTheme",
         types: [
             "신입 연봉 4천 이상",
@@ -97,14 +97,14 @@ export const searchDatas = {
             "주 40시간 미만 근무",
         ],
     },
-};
-export const searchInputData = {
-    tech: {
+];
+export const searchInputData = [
+    {
         placeholder: "기술 스택 검색",
         class: "tech",
     },
-    company: {
+    {
         placeholder: "회사 이름 검색",
         name: "company",
     },
-};
+];

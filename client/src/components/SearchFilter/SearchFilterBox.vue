@@ -3,10 +3,14 @@
         class="search__form"
         :class="data.name === 'positionTheme' && { width: '100%' }"
     >
-        <button class="search__button" @click="handleToggleList">
+        <button
+            ref="btn"
+            class="search__button"
+            @click="handleToggleList($event)"
+        >
             {{ data.name }}
         </button>
-        <ul v-show="isOpen" class="search__list">
+        <ul v-show="isOpen" class="search__list" ref="list">
             <label v-for="value in data.types" :key="value">
                 <input
                     :type="data.boxType"
@@ -21,14 +25,14 @@
 </template>
 
 <script>
-// import { computed } from "@vue/reactivity";
-// import { get } from "http";
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 export default {
     props: ["data", "handleFilter"],
     setup(props) {
         const isOpen = ref(false);
+        const btn = ref();
+        const list = ref();
 
         // const model = ref([]);
         // const model = computed(() => ({
@@ -39,14 +43,29 @@ export default {
         //         this.$emit("update", value);
         //     },
         // }));
-        const handleToggleList = () => {
+        const handleToggleList = e => {
             isOpen.value = !isOpen.value;
         };
+        const handleCloseList = e => {
+            console.log("1");
+            if (list.value.contains(e.target)) return;
+            if (e.target !== btn.value && isOpen.value) {
+                isOpen.value = !isOpen.value;
+            }
+        };
+        onMounted(() => {
+            window.addEventListener("click", handleCloseList);
+        });
 
+        onUnmounted(() => {
+            window.removeEventListener("click", handleCloseList);
+        });
         return {
             isOpen,
+            btn,
+            list,
             handleToggleList,
-
+            handleCloseList,
             // model,
         };
     },
@@ -60,7 +79,13 @@ export default {
     width: 80%;
     box-sizing: border-box;
 }
+.search__button:hover {
+    background-color: #d7e2eb;
+    color: black;
+}
 .search__button {
+    cursor: pointer;
+    color: black;
     padding: 0.5rem 0.8rem;
     text-align: start;
     width: 100%;
@@ -69,6 +94,7 @@ export default {
     border: 0.5px solid #ccc9c9;
     border-radius: 6px;
     /* box-sizing: border-box; */
+    transition: background-color 0.3s linear;
 }
 .search__list {
     width: 100%;

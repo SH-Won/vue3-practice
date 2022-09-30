@@ -2,38 +2,30 @@
     <section class="search">
         <div class="search__flex">
             <SearchFilterBox
-                :data="searchDatas.jobs"
+                :data="searchDatas[0]"
                 :handleFilter="handleCheckBoxFilter"
             />
             <SearchFilterInput
+                v-for="data in searchInputData"
+                :key="data.class"
+                :data="data"
+                :handleFilter="handleSingleFilter"
+            />
+            <!-- <SearchFilterInput
                 :data="searchInputData.tech"
                 :handleFilter="handleSingleFilter"
             />
             <SearchFilterInput
                 :data="searchInputData.company"
                 :handleFilter="handleSingleFilter"
-            />
+            /> -->
         </div>
         <div class="search__flexwrap">
             <SearchFilterBox
-                :data="searchDatas.career"
+                v-for="data in searchDatas.slice(1)"
+                :key="data.class"
+                :data="data"
                 :handleFilter="handleSingleFilter"
-            />
-            <SearchFilterBox
-                :data="searchDatas.wage"
-                :handleFilter="handleSingleFilter"
-            />
-            <SearchFilterBox
-                :data="searchDatas.people"
-                :handleFilter="handleCheckBoxFilter"
-            />
-            <SearchFilterBox
-                :data="searchDatas.place"
-                :handleFilter="handleCheckBoxFilter"
-            />
-            <SearchFilterBox
-                :data="searchDatas.positionTheme"
-                :handleFilter="handleCheckBoxFilter"
             />
         </div>
 
@@ -47,6 +39,7 @@ import { searchDatas, searchInputData } from "@/components/SearchFilter/data";
 import { ref } from "vue";
 import SearchFilterInput from "@/components/SearchFilter/SearchFilterInput.vue";
 
+// 필터창이 아닌 곳을 눌렀을때는 필터창이 닫혀야함
 export default {
     setup() {
         const filter = ref({
@@ -88,6 +81,7 @@ export default {
             searchInputData,
             handleCheckBoxFilter,
             handleSingleFilter,
+
             print,
         };
     },
@@ -112,7 +106,7 @@ export default {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-
+    justify-content: center;
     align-items: stretch;
 }
 .search__flexwrap > .search__form {
