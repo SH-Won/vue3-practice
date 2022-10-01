@@ -22,6 +22,11 @@ const routes = [
         name: "search",
         component: () => import("../views/SearchFilterView.vue"),
     },
+    {
+        path: "/ui",
+        name: "ui",
+        component: () => import("../views/UserInterfaceView"),
+    },
 ];
 
 const router = createRouter({
